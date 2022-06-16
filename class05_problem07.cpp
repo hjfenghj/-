@@ -1,70 +1,51 @@
 #include<iostream>
 #include<vector>
-#include<queue>
-#include<map>
+
 using namespace std;
 
-class Job
+
+vector<int> operator+(vector<int> Arr1,vector<int> Arr2)
+{
+	vector<int> res(Arr2.size(), 0);
+	for (int i = 0; i < Arr1.size(); i++)
+	{
+		res[i] = Arr1[i] + Arr2[i];
+	}
+	return res;
+}
+class PROBLEM07
 {
 public:
-	int money;
-	int hard;
-	Job(int m,int h)
+	int process(vector<int> Arr)
 	{
-		money = m;
-		hard = h;
+		int cur = 0;
+		int ans = INT_MIN;
+		if (Arr.size() <= 0)
+			return 0;
+		for (auto n : Arr)
+		{
+			cur += n;
+			ans = max(ans, cur);
+			cur = cur < 0 ? 0 : cur;
+		}
+		return ans;
+	}
+
+
+	int get_res(vector<vector<int>> Arr)
+	{
+		int ans = INT_MIN;
+		int row = Arr.size();
+		int col = Arr[0].size();
+		for (int i = 0; i < row; i++)
+		{
+			ans = max(ans, process(Arr[i]));
+			for (int j = i+1; j < col; j++)
+			{
+				ans = max(ans, process(Arr[i] + Arr[j]));
+			}
+		}
+		return ans;
 	}
 };
 
-class PROBLEM02
-{
-public:
-	priority_queue<Job> Jobarr;//将给的工作数组排序
-	map<int,int> JobArr_dowm;////工作降采样，同样的难度保留钱多的，难度表达钱也需要变大
-
-	//将所有的工作存入哈希表，且每种工作只留下报酬最多的
-	static bool cmp(Job J1, Job J2)
-	{
-		//难度大的在后，难度相同的钱数多的在前
-		return J1.hard == J2.hard ? J2.money < J2.money : J2.hard > J1.hard;
-	}
-
-	void get_sort_Jobarr(vector<Job> Arr)
-	{
-		for (int i = 1; i < Arr.size(); i++)
-		{
-			Jobarr.push(Arr[i]);
-		}
-
-		//工作降采样，同样的难度保留钱多的，不同难度但是钱相等，就保留困难等级低的
-		JobArr_dowm.emplace(-Jobarr.top().hard, Jobarr.top().money);
-		Job cur = Jobarr.top();
-		Jobarr.pop();
-		while (!Jobarr.empty())
-		{
-			if (Jobarr.top().hard != cur.hard && Jobarr.top().money > cur.money)
-			{
-				cur = Jobarr.top();
-				Jobarr.pop();
-				JobArr_dowm.emplace(-cur.hard, cur.money);
-			}
-		}
-	}
-	int get_res(vector<int> ability)
-	{
-		vector<int> ans(ability.size(), 0);
-		int res = 0;
-		for (int i = 0; i < ability.size(); i++)
-		{
-			//lower_bound表示找到大于等于给定值得第一个元素，因为我们需要找到小于等于工作能力得第一分工作
-			//所以加了负号；
-			if (JobArr_dowm.lower_bound(-ability[i]) != JobArr_dowm.end())
-			{
-				ans[i] = JobArr_dowm.upper_bound(-ability[i])->second;
-				res += JobArr_dowm.upper_bound(-ability[i])->second;
-			}
-		}
-		cout << res << endl;
-		return 0;
-	}
-};

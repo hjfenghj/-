@@ -1,142 +1,85 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
+#include<string>
 #include<vector>
-#include<stack>
+#include<map>
+#include<iomanip>
 
 using namespace std;
 
-//递归加回溯写法
+class Node
+{
+public:
+    string str;
+    map<string, Node*> nexts;
+    Node(string s)
+    {
+        str = s;
+    }
+    Node(string s, Node* N)
+    {
+        str = s;
+        nexts[s] = N;
+    }
+};
+
 class PROBLEM01
 {
 public:
-	//idx代表目前字符串的长度
-	//s目前字符串
-	//N目标长度
-	int get_res(vector<char> s, int N, int idx)
-	{
-		int ans = 0;
-		//截至条件，每一个达到目标的叶节点
-		if (s.size() == N)
-			return 1;
-		//上一个字符为'1'，下一个字符有两种情况
-		if (s[idx - 1] == '1')
-		{
-			s.push_back('1');
-			ans += get_res(s, N, idx + 1);
-			//回溯
-			s[idx] = '0';
-			ans += get_res(s, N, idx + 1);
+    vector<string> string2vec(string str)
+    {
+        vector<string> vec_path;
+        const char* path = str.c_str();
+        char* p = strtok(const_cast<char*>(path), "\\");  //const_cast可以去除const的限定
+        while (p != NULL)
+        {
+            vec_path.push_back(p);
+            p = strtok(NULL, "\\");
+        }
+        return vec_path;
+    }
 
-		}
-		//上一个字符为'0',下一个字符只有一种情况
-		if (s[idx - 1] == '0')
-		{
-			s.push_back('1');
-			ans += get_res(s, N, idx + 1);
-		}
-		return ans;
-	}
+    //建立前缀树
+    Node* get_tire(vector<string> strs)
+    {
+        Node* head =new Node(" ");
+        Node* cur = head;
+        for (string str : strs)
+        {
+            vector<string> vec_str = string2vec(str);
+            for (string vec_s : vec_str)
+            {
+                if (cur->nexts.find(vec_s) == cur->nexts.end())
+                {
+                    Node* temp =new Node(vec_s);
+                    cur->nexts.emplace(vec_s, temp);
+                }
+                cur = cur->nexts[vec_s];
+            }
+            cur = head;
+        }   
+        return head;
+    }
 
-	int MAIN(int T)
-	{
-		int ans = 0;
-		vector<char> Arr1;
-		Arr1.push_back('0');
-		PROBLEM01 P1;
-		ans = P1.get_res(Arr1, T, 1);
-		Arr1[0] = '1';
-		ans += P1.get_res(Arr1, T, 1);
-		cout << ans << endl;
-		return 0;
-	}
-};
+    //从第几级文件夹开始输出
+    void print(Node* node, int level)
+    {
 
-//斐波那契数列写法,复杂度O(N)
-class PROBLEM01_2
-{
-public:
-	int get_res(int N)
-	{
-		vector<int> res(N+1,0);
-		res[0] = 1;
-		res[1] = 2;
-		for (int i = 2; i <= N; i++)
-		{
-			res[i] = res[i - 1] + res[i - 2];
-		}
-		cout << res[N] << endl;
-		return 0 ;
-	}
-};
+        if (level != 0)
+        {
+            cout << setw(2 * (level-1) + node->str.size()) << node->str << endl;
+        }
+        for (auto cur : node->nexts)
+            print(cur.second,level+1);
+    }
 
-
-//斐波那契数列进阶模式，复杂度O(logN)
-class PROBLEM01_3
-{
-public:
-	int get_res(int N)
-	{
-		vector<vector<int>> M = { {1,1},{1,0} };//初始转换矩阵
-		vector<int> base = { 3,2 };//起始项
-		
-		vector<vector<int>> M_N1(M.size(), vector<int>(M.size(), 0));//最终的转化矩阵
-		//初始化为对角矩阵
-		for (int i = 0; i < M.size(); i++)
-			M_N1[i][i] = 1;
-
-		int temp = N - 2;//转换矩阵需要N-2次方
-		while (temp != 0)
-		{
-			if (temp & 1 == 1)
-			{
-				M_N1 = POW(M_N1, M);
-				M = POW(M, M);
-			}
-			else
-				M = POW(M, M);
-			temp = temp >> 1;
-		}
-
-		vector<int> res = DOT(base, M_N1);
-		return res[0];
-	}
-	vector<vector<int>> POW(vector<vector<int>> Arr1, vector<vector<int>> Arr2)
-	{
-		vector<vector<int>> res(Arr1.size(),vector<int>(Arr2[0].size(),0));
-		for (int i = 0; i < Arr1.size(); i++)
-		{
-			for (int j = 0; j < Arr2.size(); j++)
-			{
-				for(int k=0;k<Arr1[0].size();k++)
-					res[i][j] += Arr1[i][k] * Arr2[k][j];
-			}
-		}
-		return res;
-	}
-
-	vector<int> DOT(vector<int> Arr, vector<vector<int>> M)
-	{
-		int L = Arr.size();
-		vector<int> res(L, 0);
-		for (int i = 0; i < L; i++)
-		{
-			for (int j = 0; j < L; j++)
-			{
-					res[i] += Arr[j] * M[j][i];
-			}
-		}
-		return res;
-	}
-	
 };
 
 int main()
 {
-	int T = 4;
-	PROBLEM01 P;
-	P.MAIN(4);
-	PROBLEM01_2 P2;
-	P2.get_res(4);
-	PROBLEM01_3 P3;
-	cout << P3.get_res(4) << endl;
-	return 0;
+    vector<string> arr_string = { "ac\\b\\cd","ac\\b\\c\\d" };
+    PROBLEM01 P;
+    Node* node = P.get_tire(arr_string);
+    P.print(node, 0);
+    return 0;
 }
