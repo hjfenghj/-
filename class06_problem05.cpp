@@ -4,7 +4,7 @@
 
 using namespace std;
 
-//Ì°ĞÄ½â·¨
+//è´ªå¿ƒè§£æ³•
 class PROBLEM05_1
 {
 public:
@@ -18,10 +18,10 @@ public:
 				idx++;
 			else //str[idx]=='.'
 			{
-				ans++;//¸øµÆ
-				if (idx + 1 == str.size())//idxÎ»ÖÃÊÇ×îºóÒ»¸öÎ»ÖÃ
+				ans++;//ç»™ç¯
+				if (idx + 1 == str.size())//idxä½ç½®æ˜¯æœ€åä¸€ä¸ªä½ç½®
 					return ans;
-				else //idx²»ÊÇ×îºóÒ»¸öÎ»ÖÃ
+				else //idxä¸æ˜¯æœ€åä¸€ä¸ªä½ç½®
 				{
 					if (str[idx + 1] == 'X')
 						idx += 2;
