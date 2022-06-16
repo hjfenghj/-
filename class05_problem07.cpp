@@ -19,14 +19,14 @@ public:
 class PROBLEM02
 {
 public:
-	priority_queue<Job> Jobarr;//½«¸øµÄ¹¤×÷Êı×éÅÅĞò
-	map<int,int> JobArr_dowm;////¹¤×÷½µ²ÉÑù£¬Í¬ÑùµÄÄÑ¶È±£ÁôÇ®¶àµÄ£¬ÄÑ¶È±í´ïÇ®Ò²ĞèÒª±ä´ó
-
-	//½«ËùÓĞµÄ¹¤×÷´æÈë¹şÏ£±í£¬ÇÒÃ¿ÖÖ¹¤×÷Ö»ÁôÏÂ±¨³ê×î¶àµÄ
+	priority_queue<Job,vector<Job>,decltype(&cmp)> Jobarr(cmp);//å°†ç»™çš„å·¥ä½œæ•°ç»„æ’åº
+	map<int,int> JobArr_dowm;////å·¥ä½œé™é‡‡æ ·ï¼ŒåŒæ ·çš„éš¾åº¦ä¿ç•™é’±å¤šçš„ï¼Œéš¾åº¦è¡¨è¾¾é’±ä¹Ÿéœ€è¦å˜å¤§
+	//å°†æ‰€æœ‰çš„å·¥ä½œå­˜å…¥å“ˆå¸Œè¡¨ï¼Œä¸”æ¯ç§å·¥ä½œåªç•™ä¸‹æŠ¥é…¬æœ€å¤šçš„
 	static bool cmp(Job J1, Job J2)
 	{
-		//ÄÑ¶È´óµÄÔÚºó£¬ÄÑ¶ÈÏàÍ¬µÄÇ®Êı¶àµÄÔÚÇ°
-		return J1.hard == J2.hard ? J2.money < J2.money : J2.hard > J1.hard;
+		//å‚æ•°1æ˜¯å †é¡¶åˆ°å †åº•é™åº(å› ä¸ºå‚æ•°1ä¸ºè´Ÿæ•°)ï¼Œå‚æ•°2åœ¨å‚æ•°1ç›¸åŒçš„æ—¶å€™ä»å †é¡¶åˆ°å †åº•é™åº
+		return J1.hard != J2.hard ? J2.hard > J1.hard : J2.money> J1.money;
+		//J2.hard>J2.hardè¡¨ç¤ºåªæœ‰æ–°æ¥çš„æ•°æ®å¤§äºå…ˆå‰çš„æ•°æ®æ—¶ï¼Œæ‰èƒ½å°†æ–°æ¥çš„æ•°æ®æ”¾åœ¨å †é¡¶
 	}
 
 	void get_sort_Jobarr(vector<Job> Arr)
@@ -36,7 +36,7 @@ public:
 			Jobarr.push(Arr[i]);
 		}
 
-		//¹¤×÷½µ²ÉÑù£¬Í¬ÑùµÄÄÑ¶È±£ÁôÇ®¶àµÄ£¬²»Í¬ÄÑ¶Èµ«ÊÇÇ®ÏàµÈ£¬¾Í±£ÁôÀ§ÄÑµÈ¼¶µÍµÄ
+		//å·¥ä½œé™é‡‡æ ·ï¼ŒåŒæ ·çš„éš¾åº¦ä¿ç•™é’±å¤šçš„ï¼Œä¸åŒéš¾åº¦ä½†æ˜¯é’±ç›¸ç­‰ï¼Œå°±ä¿ç•™å›°éš¾ç­‰çº§ä½çš„
 		JobArr_dowm.emplace(-Jobarr.top().hard, Jobarr.top().money);
 		Job cur = Jobarr.top();
 		Jobarr.pop();
@@ -45,9 +45,9 @@ public:
 			if (Jobarr.top().hard != cur.hard && Jobarr.top().money > cur.money)
 			{
 				cur = Jobarr.top();
-				Jobarr.pop();
 				JobArr_dowm.emplace(-cur.hard, cur.money);
 			}
+			Jobarr.pop();
 		}
 	}
 	int get_res(vector<int> ability)
@@ -56,8 +56,8 @@ public:
 		int res = 0;
 		for (int i = 0; i < ability.size(); i++)
 		{
-			//lower_bound±íÊ¾ÕÒµ½´óÓÚµÈÓÚ¸ø¶¨ÖµµÃµÚÒ»¸öÔªËØ£¬ÒòÎªÎÒÃÇĞèÒªÕÒµ½Ğ¡ÓÚµÈÓÚ¹¤×÷ÄÜÁ¦µÃµÚÒ»·Ö¹¤×÷
-			//ËùÒÔ¼ÓÁË¸ººÅ£»
+			//lower_boundè¡¨ç¤ºæ‰¾åˆ°å¤§äºç­‰äºç»™å®šå€¼å¾—ç¬¬ä¸€ä¸ªå…ƒç´ ï¼Œå› ä¸ºæˆ‘ä»¬éœ€è¦æ‰¾åˆ°å°äºç­‰äºå·¥ä½œèƒ½åŠ›å¾—ç¬¬ä¸€åˆ†å·¥ä½œ
+			//æ‰€ä»¥åŠ äº†è´Ÿå·ï¼›
 			if (JobArr_dowm.lower_bound(-ability[i]) != JobArr_dowm.end())
 			{
 				ans[i] = JobArr_dowm.upper_bound(-ability[i])->second;
