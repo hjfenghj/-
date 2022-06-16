@@ -7,17 +7,17 @@ using namespace std;
 class PROBLEM04
 {
 public:
-	vector<int> pre;//Ç°ĞòÊı×é
-	vector<int> in;//ÖĞĞòÊı×é
-	vector<int> pos;//ºóĞòÊı×é
-	map<int, int> M;//ÓÃÓÚ²éÕÒÖĞĞòÊı×éµÄÔªËØ
+	vector<int> pre;//å‰åºæ•°ç»„
+	vector<int> in;//ä¸­åºæ•°ç»„
+	vector<int> pos;//ååºæ•°ç»„
+	map<int, int> M;//ç”¨äºæŸ¥æ‰¾ä¸­åºæ•°ç»„çš„å…ƒç´ 
 	PROBLEM04(vector<int> p, vector<int> I)
 	{
 		pre = p;
 		in = I;
 		pos.resize(in.size());
 	}
-	//½«ÖĞĞòÊı×é×ª»»Îªmap´¢´æ,·½±ã²éÕÒÔªËØÔÚÔ­Ê¼µÄÊı×éÖĞµÄË÷Òı
+	//å°†ä¸­åºæ•°ç»„è½¬æ¢ä¸ºmapå‚¨å­˜,æ–¹ä¾¿æŸ¥æ‰¾å…ƒç´ åœ¨åŸå§‹çš„æ•°ç»„ä¸­çš„ç´¢å¼•
 	void vec2map()
 	{
 		for (int i = 0; i < in.size(); i++)
@@ -26,23 +26,23 @@ public:
 		}
 	}
 
-	//µİ¹éË¼Â·1
-	//°ÑpreµÄ[p1,p2]Î»ÖÃºÍinµÄ[n1,n2]Î»ÖÃµÄÔªËØÈ¡³öÀ´·ÅÔÚposµÄ[pos1,pos2Î»ÖÃÉÏ]
+	//é€’å½’æ€è·¯1
+	//æŠŠpreçš„[p1,p2]ä½ç½®å’Œinçš„[n1,n2]ä½ç½®çš„å…ƒç´ å–å‡ºæ¥æ”¾åœ¨posçš„[pos1,pos2ä½ç½®ä¸Š]
 	void process_1(int p1, int p2, int n1, int n2, int pos1, int pos2)
 	{
 		if (p1 > p2)
 			return;
-		//¸ù¾İÇ°Ğò±éÀúºÍºóĞò±éÀúµÄË³Ğò£¬½«Ç°ĞòÊı×éµÄµÚÒ»¸öÔªËØ¸øºóĞòÊı×éposµÄ×îºóÒ»¸öÔªËØ
-		pos[pos2] = pre[p1];//½«Ç°ĞòµÄÊ×ÔªËØ ¸øºóĞòµÄÄ©Î²ÔªËØ
-		int find = M[pre[p1]];//ÕÒµ½ÖĞĞòÖĞµ±Ç°½ÚµãµÄÎ»ÖÃ£¬°ÑÖĞĞòÊı×éÒ»·ÖÎª¶ş
+		//æ ¹æ®å‰åºéå†å’Œååºéå†çš„é¡ºåºï¼Œå°†å‰åºæ•°ç»„çš„ç¬¬ä¸€ä¸ªå…ƒç´ ç»™ååºæ•°ç»„posçš„æœ€åä¸€ä¸ªå…ƒç´ 
+		pos[pos2] = pre[p1];//å°†å‰åºçš„é¦–å…ƒç´  ç»™ååºçš„æœ«å°¾å…ƒç´ 
+		int find = M[pre[p1]];//æ‰¾åˆ°ä¸­åºä¸­å½“å‰èŠ‚ç‚¹çš„ä½ç½®ï¼ŒæŠŠä¸­åºæ•°ç»„ä¸€åˆ†ä¸ºäºŒ
 
 		process1(p1 + 1, p1 + find - n1, n1, find - 1, pos1, pos1 + find - n1 -1);
 		process1(p1 + find - n1 + 1, p2, find + 1, n2, pos1 + find - n1, pos2 - 1);
 		return;
 	}
 
-	//µİ¹éË¼Â·2
-	//·µ»ØÏÂ´ÎĞèÒª¹éÎªµÄÎ»ÖÃ,´ÓpreµÄ[p1,p2]Î»ÖÃ£¬inµÄ[n1,n2]Î»ÖÃÈ¡³öÔªËØ·ÅÔÚposµÄpos2Î»ÖÃ
+	//é€’å½’æ€è·¯2
+	//è¿”å›ä¸‹æ¬¡éœ€è¦å½’ä¸ºçš„ä½ç½®,ä»preçš„[p1,p2]ä½ç½®ï¼Œinçš„[n1,n2]ä½ç½®å–å‡ºå…ƒç´ æ”¾åœ¨posçš„pos2ä½ç½®
 	int process_2(int p1, int p2, int n1, int n2, int pos2)
 	{
 		if (p1 > p2)
@@ -77,7 +77,7 @@ public:
 		TreeNode* cur = new TreeNode(pre[0]);
 		if (pre.size() == 1)
 			return cur;
-		int idx = 0;//ÕÒµ½ÖĞĞòÊı×éÖĞÄ¿Ç°½ÚµãµÄÎ»ÖÃ
+		int idx = 0;//æ‰¾åˆ°ä¸­åºæ•°ç»„ä¸­ç›®å‰èŠ‚ç‚¹çš„ä½ç½®
 		for (idx; idx < in.size(); idx++)
 		{
 			if (in[idx] == pre[0])
@@ -94,7 +94,7 @@ public:
 
 		return cur;
 	}
-	//Ê÷µÄºóĞò±éÀú
+	//æ ‘çš„ååºéå†
 	void get_res(TreeNode* node)
 	{
 		vector<int> pos;
